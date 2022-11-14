@@ -7,12 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.banking.main.dao.BankingOperations;
+import org.banking.main.exception.InvalidAmountException;
 
 public class App 
 {
 	static BufferedReader bufferedReader =new BufferedReader(new InputStreamReader(System.in)); 
 	
-	public static void main(String args[]) throws NumberFormatException, IOException, ClassNotFoundException, SQLException
+	public static void main(String args[]) throws NumberFormatException, IOException, ClassNotFoundException, SQLException, InvalidAmountException
 	{
 		
 		System.out.println("====================================================================================");
@@ -60,24 +61,24 @@ public class App
 							accountId=Integer.parseInt(bufferedReader.readLine());
 							System.out.println("Enter withdraw amount:");
 							double withdrawalAmount=Double.parseDouble(bufferedReader.readLine());
-							double result=BankingOperations.withdraw(accountId, withdrawalAmount);
 							
-							if(result==0)
+							try
 							{
-								System.out.println("Insufficient Balance!!");
-								System.out.println("Transaction is unsuccessfull!!");
-							}
-							else
-							{
+								double result=BankingOperations.withdraw(accountId, withdrawalAmount);						
 								System.out.println("Transaction successfull!!");
 								System.out.println("Remaining balance is:"+result);
 							}
+							catch(InvalidAmountException e)
+							{
+								System.out.println("Invalid Withdrawal amount!!");
+							}
 							break;
+							
 					case 3: System.out.println("Enter valid account id:");
 							accountId=Integer.parseInt(bufferedReader.readLine());
 							System.out.println("Enter deposit amount:");
 							double depositAmount=Double.parseDouble(bufferedReader.readLine());
-							result=BankingOperations.deposit(accountId, depositAmount);
+							double result=BankingOperations.deposit(accountId, depositAmount);
 							
 							if(result==0)
 							{

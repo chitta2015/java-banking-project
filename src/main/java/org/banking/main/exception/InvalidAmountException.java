@@ -1,0 +1,10 @@
+package org.banking.main.exception;
+
+public class InvalidAmountException extends Exception {
+
+	public InvalidAmountException(String msg)
+	{
+		super(msg);
+		
+	}
+}

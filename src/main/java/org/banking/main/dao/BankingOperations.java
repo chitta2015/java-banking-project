@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.banking.main.exception.InvalidAmountException;
+
 public class BankingOperations {
 	
 	public static boolean login(String userName, String password) throws ClassNotFoundException, SQLException
 	{
+		try
+		{
 		Connection connection= MysqlDBConnection.dbconnect();
 		PreparedStatement statement=connection.prepareStatement("select * from account where username=?");
 		statement.setString(1, userName);
@@ -29,6 +33,16 @@ public class BankingOperations {
 		{
 			return false;
 		}
+		}
+		catch(ClassNotFoundException e)
+		{
+			System.out.println("Something went wrong!! "); 
+		}
+		catch(SQLException e)
+		{
+			System.out.println("Username is incorrect!! "); 
+		}
+		return false;
 		
 		
 	}
@@ -37,19 +51,30 @@ public class BankingOperations {
 	
 	
 	public static double balanceCheck(long accountId) throws ClassNotFoundException, SQLException
-	{
+	{  double balance=0;
+		try
+		{
 		Connection connection= MysqlDBConnection.dbconnect();
 		PreparedStatement statement=connection.prepareStatement("select * from account where accid=?");
 		statement.setLong(1, accountId);
 		
 		ResultSet result=statement.executeQuery();
 		result.next();
-		double balance=result.getDouble("balance");
-		return balance;
+		balance=result.getDouble("balance");
 		
+		}
+		catch(SQLException e)
+		{
+			System.out.println("Wrong accountid or password!!");
+		}
+		catch(Exception e)
+		{
+			System.out.println("Something went wrong!!");
+		}
+		return balance;
 	}
 	
-	public static double withdraw(long accountId, double withdrawalAmount) throws ClassNotFoundException, SQLException
+	public static double withdraw(long accountId, double withdrawalAmount) throws ClassNotFoundException, SQLException, InvalidAmountException
 	{
 		Connection connection= MysqlDBConnection.dbconnect();
 		PreparedStatement statement=connection.prepareStatement("select * from account where accid=?");
@@ -77,7 +102,7 @@ public class BankingOperations {
 		}
 		else
 		{
-			   return 0;
+			throw new InvalidAmountException("Invalid Withdrawal amount!!");
 		}
 	}
 	
